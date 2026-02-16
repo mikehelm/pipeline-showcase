@@ -172,10 +172,187 @@ body{font-family:var(--mono);background:var(--bg);color:var(--text);min-height:1
   <div class="stat"><span class="num" id="stat-models">0</span><span class="label">AI Models in Stack</span></div>
 </div>
 
-<!-- THE PIPELINE -->
+<!-- THE PIPELINE — ANIMATED OVERVIEW -->
 <div class="section-hdr">
   <div class="dot" style="background:var(--amber);color:var(--amber)"></div>
   <h2>The Pipeline</h2>
+  <div class="line"></div>
+</div>
+
+<!-- ANIMATED SVG FLOW DIAGRAM -->
+<div style="position:relative;width:100%;height:520px;margin:10px auto 60px;overflow:visible">
+  <svg width="1100" height="520" viewBox="0 0 1100 520" style="width:100%;height:100%">
+    <defs>
+      <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- Dim base paths -->
+    <!-- Trunk -->
+    <line x1="550" y1="30" x2="550" y2="130" stroke="rgba(100,160,255,0.12)" stroke-width="2"/>
+    <!-- Fork left -->
+    <path d="M550,130 C550,170 200,170 200,210" fill="none" stroke="rgba(80,220,120,0.1)" stroke-width="2"/>
+    <!-- Fork center -->
+    <line x1="550" y1="130" x2="550" y2="210" stroke="rgba(245,166,35,0.1)" stroke-width="2"/>
+    <!-- Fork right -->
+    <path d="M550,130 C550,170 900,170 900,210" fill="none" stroke="rgba(255,100,100,0.1)" stroke-width="2"/>
+    <!-- Converge left -->
+    <path d="M200,370 C200,400 550,400 550,430" fill="none" stroke="rgba(80,220,120,0.1)" stroke-width="2"/>
+    <!-- Converge center -->
+    <line x1="550" y1="370" x2="550" y2="430" stroke="rgba(245,166,35,0.1)" stroke-width="2"/>
+    <!-- Converge right -->
+    <path d="M900,370 C900,400 550,400 550,430" fill="none" stroke="rgba(255,100,100,0.1)" stroke-width="2"/>
+    <!-- Final -->
+    <line x1="550" y1="430" x2="550" y2="490" stroke="rgba(180,100,255,0.12)" stroke-width="2"/>
+
+    <!-- ANIMATED GLOW PATHS — loop 10 times -->
+    <!-- Trunk glow -->
+    <line x1="550" y1="30" x2="550" y2="130" stroke="rgba(100,160,255,0.6)" stroke-width="2.5" stroke-dasharray="100" stroke-dashoffset="100" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.8s" begin="0.3s;loop1.end+1.5s" fill="freeze" id="a1" repeatCount="10"/>
+    </line>
+    <!-- Fork left glow -->
+    <path d="M550,130 C550,170 200,170 200,210" fill="none" stroke="rgba(80,220,120,0.6)" stroke-width="2.5" stroke-dasharray="400" stroke-dashoffset="400" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1.2s" begin="a1.end" fill="freeze" id="a2"/>
+    </path>
+    <!-- Fork center glow -->
+    <line x1="550" y1="130" x2="550" y2="210" stroke="rgba(245,166,35,0.6)" stroke-width="2.5" stroke-dasharray="80" stroke-dashoffset="80" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="80" to="0" dur="0.6s" begin="a1.end" fill="freeze"/>
+    </line>
+    <!-- Fork right glow -->
+    <path d="M550,130 C550,170 900,170 900,210" fill="none" stroke="rgba(255,100,100,0.6)" stroke-width="2.5" stroke-dasharray="400" stroke-dashoffset="400" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1.2s" begin="a1.end" fill="freeze"/>
+    </path>
+    <!-- Converge left glow -->
+    <path d="M200,370 C200,400 550,400 550,430" fill="none" stroke="rgba(80,220,120,0.6)" stroke-width="2.5" stroke-dasharray="400" stroke-dashoffset="400" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="a2.end+2s" fill="freeze" id="a3"/>
+    </path>
+    <!-- Converge center glow -->
+    <line x1="550" y1="370" x2="550" y2="430" stroke="rgba(245,166,35,0.6)" stroke-width="2.5" stroke-dasharray="60" stroke-dashoffset="60" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="60" to="0" dur="0.5s" begin="a2.end+2s" fill="freeze"/>
+    </line>
+    <!-- Converge right glow -->
+    <path d="M900,370 C900,400 550,400 550,430" fill="none" stroke="rgba(255,100,100,0.6)" stroke-width="2.5" stroke-dasharray="400" stroke-dashoffset="400" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="a2.end+2s" fill="freeze"/>
+    </path>
+    <!-- Final glow -->
+    <line x1="550" y1="430" x2="550" y2="490" stroke="rgba(180,100,255,0.6)" stroke-width="2.5" stroke-dasharray="60" stroke-dashoffset="60" filter="url(#glow)">
+      <animate attributeName="stroke-dashoffset" from="60" to="0" dur="0.5s" begin="a3.end+0.3s" fill="freeze" id="loop1"/>
+    </line>
+
+    <!-- TRAVELING DOTS -->
+    <!-- Down trunk -->
+    <circle r="5" fill="#64a0ff" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.8s" begin="0.3s;loop1.end+1s" fill="freeze"/>
+      <animateMotion dur="0.8s" begin="0.3s;loop1.end+1s" fill="freeze" path="M0,0 L0,100"/>
+      <set attributeName="cx" to="550"/><set attributeName="cy" to="30"/>
+    </circle>
+    <!-- Fork left dot -->
+    <circle r="4" fill="#50dc78" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1.2s" begin="a1.end;loop1.end+1.8s" fill="freeze"/>
+      <animateMotion dur="1.2s" begin="a1.end;loop1.end+1.8s" fill="freeze" path="M550,130 C550,170 200,170 200,210"/>
+    </circle>
+    <!-- Fork center dot -->
+    <circle r="4" fill="#f5a623" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.6s" begin="a1.end;loop1.end+1.8s" fill="freeze"/>
+      <animateMotion dur="0.6s" begin="a1.end;loop1.end+1.8s" fill="freeze" path="M0,0 L0,80"/>
+      <set attributeName="cx" to="550"/><set attributeName="cy" to="130"/>
+    </circle>
+    <!-- Fork right dot -->
+    <circle r="4" fill="#ff6464" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1.2s" begin="a1.end;loop1.end+1.8s" fill="freeze"/>
+      <animateMotion dur="1.2s" begin="a1.end;loop1.end+1.8s" fill="freeze" path="M550,130 C550,170 900,170 900,210"/>
+    </circle>
+    <!-- Converge dots -->
+    <circle r="4" fill="#50dc78" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="a2.end+2s" fill="freeze"/>
+      <animateMotion dur="1s" begin="a2.end+2s" fill="freeze" path="M200,370 C200,400 550,400 550,430"/>
+    </circle>
+    <circle r="4" fill="#ff6464" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="a2.end+2s" fill="freeze"/>
+      <animateMotion dur="1s" begin="a2.end+2s" fill="freeze" path="M900,370 C900,400 550,400 550,430"/>
+    </circle>
+    <!-- Final dot -->
+    <circle r="5" fill="#b46aff" opacity="0" filter="url(#glow)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.5s" begin="a3.end+0.3s" fill="freeze"/>
+      <animateMotion dur="0.5s" begin="a3.end+0.3s" fill="freeze" path="M0,0 L0,60"/>
+      <set attributeName="cx" to="550"/><set attributeName="cy" to="430"/>
+    </circle>
+
+    <!-- Convergence pulse -->
+    <circle cx="550" cy="430" r="6" fill="none" stroke="#b46aff" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0" dur="1.5s" begin="a3.end+0.5s" fill="freeze"/>
+      <animate attributeName="r" from="6" to="30" dur="1.5s" begin="a3.end+0.5s" fill="freeze"/>
+    </circle>
+
+    <!-- NODE LABELS (inside SVG for alignment) -->
+    <!-- Research node -->
+    <circle cx="550" cy="30" r="16" fill="#64a0ff"/>
+    <text x="550" y="35" text-anchor="middle" fill="#06060c" font-size="13" font-weight="800" font-family="var(--mono)">R</text>
+    <text x="614" y="35" fill="#ddd" font-size="12" font-weight="600" font-family="var(--mono)">Deep Research</text>
+    <text x="614" y="50" fill="#666" font-size="10" font-family="var(--mono)">45+ sources · Opus + Sonnet</text>
+
+    <!-- Fork node -->
+    <circle cx="550" cy="130" r="18" fill="#f5a623"/>
+    <text x="550" y="136" text-anchor="middle" fill="#06060c" font-size="14" font-weight="800" font-family="var(--mono)">S</text>
+    <text x="440" y="125" fill="#ddd" font-size="12" font-weight="600" font-family="var(--mono)" text-anchor="end">Specification PRD</text>
+    <text x="440" y="142" fill="#666" font-size="10" font-family="var(--mono)" text-anchor="end">30-76KB · Opus 4.6</text>
+
+    <!-- Left stage card bg -->
+    <rect x="100" y="210" width="200" height="155" rx="10" fill="#0c0c14" stroke="rgba(80,220,120,0.25)" stroke-width="1"/>
+    <line x1="100" y1="213" x2="300" y2="213" stroke="#50dc78" stroke-width="2" opacity="0.6"/>
+    <text x="116" y="236" fill="#50dc78" font-size="11" font-weight="700" font-family="var(--mono)" letter-spacing="1.5">CODEX BUILD</text>
+    <text x="116" y="256" fill="#ccc" font-size="11" font-weight="600" font-family="var(--mono)">One-shot from spec</text>
+    <text x="116" y="275" fill="#666" font-size="10" font-family="var(--mono)">GPT-5.3 Codex CLI</text>
+    <text x="116" y="295" fill="#666" font-size="10" font-family="var(--mono)">Sandbox + tests</text>
+    <text x="116" y="315" fill="#666" font-size="10" font-family="var(--mono)">CODING-STANDARDS.md</text>
+    <text x="116" y="345" fill="#50dc78" font-size="10" font-family="var(--mono)">⚡ 5-20 min per build</text>
+
+    <!-- Center stage card bg -->
+    <rect x="450" y="210" width="200" height="155" rx="10" fill="#0c0c14" stroke="rgba(255,100,100,0.25)" stroke-width="1"/>
+    <line x1="450" y1="213" x2="650" y2="213" stroke="#ff6464" stroke-width="2" opacity="0.6"/>
+    <text x="466" y="236" fill="#ff6464" font-size="11" font-weight="700" font-family="var(--mono)" letter-spacing="1.5">AI REVIEW</text>
+    <text x="466" y="256" fill="#ccc" font-size="11" font-weight="600" font-family="var(--mono)">Score to 9/10</text>
+    <text x="466" y="275" fill="#666" font-size="10" font-family="var(--mono)">ChatGPT 5.2 Pro</text>
+    <text x="466" y="295" fill="#666" font-size="10" font-family="var(--mono)">7-15 min extended think</text>
+    <text x="466" y="315" fill="#666" font-size="10" font-family="var(--mono)">Catches issues PRE-code</text>
+    <text x="466" y="345" fill="#ff6464" font-size="10" font-family="var(--mono)">↩ Loop if &lt; 9/10</text>
+
+    <!-- Right stage card bg -->
+    <rect x="800" y="210" width="200" height="155" rx="10" fill="#0c0c14" stroke="rgba(74,224,224,0.25)" stroke-width="1"/>
+    <line x1="800" y1="213" x2="1000" y2="213" stroke="#4ae0e0" stroke-width="2" opacity="0.6"/>
+    <text x="816" y="236" fill="#4ae0e0" font-size="11" font-weight="700" font-family="var(--mono)" letter-spacing="1.5">VISUAL QA</text>
+    <text x="816" y="256" fill="#ccc" font-size="11" font-weight="600" font-family="var(--mono)">Screenshot review</text>
+    <text x="816" y="275" fill="#666" font-size="10" font-family="var(--mono)">Playwright captures</text>
+    <text x="816" y="295" fill="#666" font-size="10" font-family="var(--mono)">Claude Vision scores</text>
+    <text x="816" y="315" fill="#666" font-size="10" font-family="var(--mono)">Fix → re-capture</text>
+    <text x="816" y="345" fill="#4ae0e0" font-size="10" font-family="var(--mono)">📸 Until pixel-perfect</text>
+
+    <!-- Converge node -->
+    <circle cx="550" cy="430" r="18" fill="#b46aff"/>
+    <text x="550" y="436" text-anchor="middle" fill="#06060c" font-size="14" font-weight="800" font-family="var(--mono)">M</text>
+    <text x="614" y="432" fill="#ddd" font-size="12" font-weight="600" font-family="var(--mono)">Merge &amp; Evaluate</text>
+    <text x="614" y="448" fill="#666" font-size="10" font-family="var(--mono)">Best result wins</text>
+
+    <!-- Ship node -->
+    <circle cx="550" cy="490" r="16" fill="#50dc78"/>
+    <text x="550" y="495" text-anchor="middle" fill="#06060c" font-size="14" font-weight="800" font-family="var(--mono)">✓</text>
+    <text x="440" y="492" fill="#ddd" font-size="12" font-weight="600" font-family="var(--mono)" text-anchor="end">Ship to GitHub Pages</text>
+    <text x="440" y="508" fill="#666" font-size="10" font-family="var(--mono)" text-anchor="end">Live URL in &lt;30s · CodeQL</text>
+
+    <!-- Phase labels on left side -->
+    <text x="30" y="80" fill="rgba(100,160,255,0.3)" font-size="9" font-weight="700" font-family="var(--mono)" letter-spacing="2" transform="rotate(-90,30,80)">RESEARCH</text>
+    <text x="30" y="290" fill="rgba(245,166,35,0.3)" font-size="9" font-weight="700" font-family="var(--mono)" letter-spacing="2" transform="rotate(-90,30,290)">EXECUTE</text>
+    <text x="30" y="460" fill="rgba(180,100,255,0.3)" font-size="9" font-weight="700" font-family="var(--mono)" letter-spacing="2" transform="rotate(-90,30,460)">SHIP</text>
+
+    <!-- Rollback badge -->
+    <rect x="850" y="8" width="220" height="28" rx="6" fill="rgba(255,200,50,0.04)" stroke="rgba(255,200,50,0.2)" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="868" y="26" fill="#a98" font-size="10" font-family="var(--mono)">↩ ROLLBACK available at any point</text>
+  </svg>
+</div>
+
+<!-- DETAILED PIPELINE BREAKDOWN -->
+<div class="section-hdr">
+  <div class="dot" style="background:var(--amber);color:var(--amber)"></div>
+  <h2>Pipeline Deep Dive</h2>
   <div class="line"></div>
 </div>
 
