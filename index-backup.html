@@ -136,23 +136,6 @@ body{font-family:var(--mono);background:var(--bg);color:var(--text);min-height:1
 .footer .link{font-size:13px;color:var(--amber);text-decoration:none}
 .footer .meta{font-size:11px;color:var(--text-dim);margin-top:8px}
 
-/* Flow diagram */
-.flow{position:relative;width:1060px;max-width:100%;height:720px;margin:10px auto;overflow:hidden}
-.flow>svg{position:absolute;top:0;left:0;z-index:1;pointer-events:none}
-.dim{fill:none;stroke-width:2;stroke-linecap:round}
-.glo{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:var(--l);stroke-dashoffset:var(--l)}
-.nd{position:absolute;z-index:2;display:flex;align-items:center;gap:12px;opacity:0;animation:nodeIn 0.5s var(--d,0s) ease-out forwards}
-@keyframes nodeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#06060c;flex-shrink:0}
-.lb{font-size:13px;font-weight:700;color:#e8e8f0}
-.ds{font-size:11px;color:#666;margin-top:2px}
-.fcard{position:absolute;z-index:3;padding:16px 20px;border-radius:10px;border:1px solid;background:#0c0c14;opacity:0;animation:nodeIn 0.5s var(--d) ease-out forwards;max-width:260px}
-.fcard h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
-.fcard p{font-size:11px;color:#888;line-height:1.55}
-.fcard p strong{color:#ccc}
-.fcard .tool{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:4px;border:1px solid;font-size:10px;font-weight:600}
-.sbadge{position:absolute;z-index:4;padding:4px 14px;border-radius:6px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.4s}
-
 /* Animations */
 .reveal{opacity:0;transform:translateY(25px);transition:opacity 0.7s,transform 0.7s}
 .reveal.visible{opacity:1;transform:translateY(0)}
@@ -189,194 +172,236 @@ body{font-family:var(--mono);background:var(--bg);color:var(--text);min-height:1
   <div class="stat"><span class="num" id="stat-models">0</span><span class="label">AI Models in Stack</span></div>
 </div>
 
-<!-- THE PIPELINE -->
+<!-- THE PIPELINE — ANIMATED OVERVIEW -->
 <div class="section-hdr">
   <div class="dot" style="background:var(--amber);color:var(--amber)"></div>
   <h2>The Pipeline</h2>
   <div class="line"></div>
 </div>
 
-<div class="flow">
-  <!-- ===== SVG PATHS (coordinates match div positions) ===== -->
-  <!-- Dot centers: Research(160,50) PRD(750,160) Review(530,310) Build(200,490) QA(780,580) Ship(530,670) -->
-  <svg width="1060" height="720">
-    <defs><filter id="g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-
-    <!-- DIM paths -->
-    <path class="dim" d="M185,55 C400,55 550,100 730,155" stroke="rgba(100,160,255,0.12)"/>
-    <path class="dim" d="M730,180 C650,230 600,270 545,295" stroke="rgba(245,166,35,0.12)"/>
-    <path class="dim" d="M515,340 C400,400 280,450 215,480" stroke="rgba(80,220,120,0.12)"/>
-    <path class="dim" d="M230,510 C400,540 600,560 760,575" stroke="rgba(74,224,224,0.12)"/>
-    <path class="dim" d="M770,600 C700,630 600,655 545,665" stroke="rgba(80,220,120,0.12)"/>
+<!-- ANIMATED SVG FLOW — Compact card style with review iteration loop -->
+<div id="flow-wrap" style="position:relative;width:1080px;max-width:100%;height:580px;margin:10px auto 50px">
+  <!-- SVG layer for paths -->
+  <svg width="1080" height="580" style="position:absolute;top:0;left:0;z-index:1;pointer-events:none">
+    <defs>
+      <filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- Dim base paths -->
+    <path class="bp" d="M200,45 L200,100" stroke="rgba(100,160,255,0.12)" fill="none" stroke-width="2"/>
+    <path class="bp" d="M200,100 C200,140 540,110 540,155" stroke="rgba(245,166,35,0.12)" fill="none" stroke-width="2"/>
+    <path class="bp" d="M540,310 C540,340 540,360 540,360 C540,400 200,380 200,420" stroke="rgba(80,220,120,0.12)" fill="none" stroke-width="2"/>
+    <path class="bp" d="M200,420 C200,440 200,460 400,470 C600,480 800,460 870,420" stroke="rgba(74,224,224,0.12)" fill="none" stroke-width="2"/>
+    <path class="bp" d="M870,420 L870,470" stroke="rgba(80,220,120,0.12)" fill="none" stroke-width="2"/>
     <!-- Review loop arc (right side) -->
-    <path class="dim" d="M565,330 C680,360 700,220 580,175" stroke="rgba(255,100,100,0.08)" stroke-dasharray="5,4"/>
-
-    <!-- ANIMATED GLOW PATHS -->
-    <!-- Research → PRD -->
-    <path class="glo" d="M185,55 C400,55 550,100 730,155" stroke="rgba(100,160,255,0.7)" filter="url(#g)" style="--l:600">
-      <animate attributeName="stroke-dashoffset" from="600" to="0" dur="1.2s" begin="0.5s;shipDone.end+2s" fill="freeze" id="p1"/>
-    </path>
-    <!-- PRD → Review -->
-    <path class="glo" d="M730,180 C650,230 600,270 545,295" stroke="rgba(245,166,35,0.7)" filter="url(#g)" style="--l:250">
-      <animate attributeName="stroke-dashoffset" from="250" to="0" dur="0.8s" begin="p1.end+0.2s" fill="freeze" id="p2"/>
-    </path>
-
-    <!-- REVIEW LOOP — 3 iterations with color change -->
-    <!-- Pass 1: red (7.3) -->
-    <path class="glo" d="M565,330 C680,360 700,220 580,175" stroke="rgba(255,100,100,0.6)" filter="url(#g)" stroke-width="2" style="--l:350">
-      <animate attributeName="stroke-dashoffset" from="350" to="0" dur="0.9s" begin="p2.end+0.4s" fill="freeze" id="r1"/>
-    </path>
-    <!-- Pass 2: amber (8.5) -->
-    <path class="glo" d="M565,330 C680,360 700,220 580,175" stroke="rgba(245,166,35,0.6)" filter="url(#g)" stroke-width="2" style="--l:350">
-      <animate attributeName="stroke-dashoffset" from="350" to="0" dur="0.9s" begin="r1.end+0.6s" fill="freeze" id="r2"/>
-    </path>
-    <!-- Pass 3: green (9.47) -->
-    <path class="glo" d="M565,330 C680,360 700,220 580,175" stroke="rgba(80,220,120,0.7)" filter="url(#g)" stroke-width="2.5" style="--l:350">
-      <animate attributeName="stroke-dashoffset" from="350" to="0" dur="0.9s" begin="r2.end+0.6s" fill="freeze" id="r3"/>
-    </path>
-
-    <!-- Review → Build (after loops) -->
-    <path class="glo" d="M515,340 C400,400 280,450 215,480" stroke="rgba(80,220,120,0.7)" filter="url(#g)" style="--l:400">
-      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="r3.end+0.5s" fill="freeze" id="p3"/>
-    </path>
-    <!-- Build → QA -->
-    <path class="glo" d="M230,510 C400,540 600,560 760,575" stroke="rgba(74,224,224,0.7)" filter="url(#g)" style="--l:600">
-      <animate attributeName="stroke-dashoffset" from="600" to="0" dur="1.2s" begin="p3.end+0.2s" fill="freeze" id="p4"/>
-    </path>
-    <!-- QA → Ship -->
-    <path class="glo" d="M770,600 C700,630 600,655 545,665" stroke="rgba(80,220,120,0.7)" filter="url(#g)" style="--l:280">
-      <animate attributeName="stroke-dashoffset" from="280" to="0" dur="0.7s" begin="p4.end+0.2s" fill="freeze" id="p5"/>
-    </path>
-
-    <!-- TRAVELING DOTS -->
-    <circle r="5" fill="#64a0ff" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="1.2s" begin="0.5s;shipDone.end+2s" fill="freeze"/>
-      <animateMotion dur="1.2s" begin="0.5s;shipDone.end+2s" fill="freeze" path="M185,55 C400,55 550,100 730,155"/>
-    </circle>
-    <circle r="5" fill="#f5a623" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="0.8s" begin="p1.end+0.2s" fill="freeze"/>
-      <animateMotion dur="0.8s" begin="p1.end+0.2s" fill="freeze" path="M730,180 C650,230 600,270 545,295"/>
-    </circle>
-    <!-- Loop dots -->
-    <circle r="4" fill="#ff6464" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="0.9s" begin="p2.end+0.4s" fill="freeze"/>
-      <animateMotion dur="0.9s" begin="p2.end+0.4s" fill="freeze" path="M565,330 C680,360 700,220 580,175"/>
-    </circle>
-    <circle r="4" fill="#f5a623" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="0.9s" begin="r1.end+0.6s" fill="freeze"/>
-      <animateMotion dur="0.9s" begin="r1.end+0.6s" fill="freeze" path="M565,330 C680,360 700,220 580,175"/>
-    </circle>
-    <circle r="5" fill="#50dc78" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="0.9s" begin="r2.end+0.6s" fill="freeze"/>
-      <animateMotion dur="0.9s" begin="r2.end+0.6s" fill="freeze" path="M565,330 C680,360 700,220 580,175"/>
-    </circle>
-    <!-- Post-loop dots -->
-    <circle r="5" fill="#50dc78" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="r3.end+0.5s" fill="freeze"/>
-      <animateMotion dur="1s" begin="r3.end+0.5s" fill="freeze" path="M515,340 C400,400 280,450 215,480"/>
-    </circle>
-    <circle r="5" fill="#4ae0e0" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="1.2s" begin="p3.end+0.2s" fill="freeze"/>
-      <animateMotion dur="1.2s" begin="p3.end+0.2s" fill="freeze" path="M230,510 C400,540 600,560 760,575"/>
-    </circle>
-    <circle r="5" fill="#50dc78" opacity="0" filter="url(#g)">
-      <animate attributeName="opacity" values="0;1;1;0" dur="0.7s" begin="p4.end+0.2s" fill="freeze"/>
-      <animateMotion dur="0.7s" begin="p4.end+0.2s" fill="freeze" path="M770,600 C700,630 600,655 545,665"/>
-    </circle>
-
-    <!-- Ship pulse -->
-    <circle cx="530" cy="665" r="6" fill="none" stroke="#50dc78" stroke-width="2" opacity="0">
-      <animate attributeName="opacity" values="0;0.9;0" dur="1.5s" begin="p5.end+0.1s" fill="freeze" id="shipDone"/>
-      <animate attributeName="r" from="6" to="35" dur="1.5s" begin="p5.end+0.1s" fill="freeze"/>
-    </circle>
+    <path class="bp" d="M690,230 C780,230 780,155 690,155" stroke="rgba(255,100,100,0.08)" fill="none" stroke-width="1.5" stroke-dasharray="5,4"/>
   </svg>
 
-  <!-- ===== HTML NODES ===== -->
-  <!-- 01 Research — dot center at (160, 50) -->
-  <div class="nd" style="left:80px;top:28px;--d:0.2s">
-    <div class="dot" style="background:#64a0ff;box-shadow:0 0 14px rgba(100,160,255,0.4)">R</div>
-    <div><div class="lb">Deep Research</div><div class="ds">45+ sources · Opus + Sonnet</div></div>
-  </div>
-
-  <!-- 02 PRD card — dot center at (750, 160) -->
-  <div class="fcard" style="left:610px;top:100px;--d:1s;border-color:rgba(245,166,35,0.25)">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#f5a623,transparent);border-radius:10px 10px 0 0"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <div class="dot" style="background:#f5a623;box-shadow:0 0 14px rgba(245,166,35,0.4);width:32px;height:32px;font-size:13px">S</div>
-      <h4 style="color:#f5a623;margin:0">Specification PRD</h4>
+  <!-- STAGE CARDS (absolute positioned, z-index 2) -->
+  <!-- 01 Research -->
+  <div style="position:absolute;left:80px;top:0;z-index:2;opacity:0;animation:nodeIn 0.5s 0.2s ease-out forwards">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#64a0ff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#06060c;box-shadow:0 0 16px rgba(100,160,255,0.4)">R</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#e8e8f0">Deep Research</div>
+        <div style="font-size:11px;color:#666">45+ sources · Opus + Sonnet</div>
+      </div>
     </div>
-    <p><strong>30-76KB</strong> with TypeScript interfaces, state machines, API contracts.</p>
-    <div class="tool" style="border-color:rgba(245,166,35,0.25);color:#f5a623">🏛️ Claude Opus 4.6</div>
   </div>
 
-  <!-- 03 Review card — dot center at (530, 310) -->
-  <div class="fcard" style="left:370px;top:260px;--d:2.2s;border-color:rgba(255,100,100,0.25)">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ff6464,transparent);border-radius:10px 10px 0 0"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <div class="dot" style="background:#ff6464;box-shadow:0 0 14px rgba(255,100,100,0.4);width:32px;height:32px;font-size:13px">Q</div>
-      <h4 style="color:#ff6464;margin:0">AI Review Loop</h4>
+  <!-- 02 PRD -->
+  <div style="position:absolute;left:390px;top:130px;z-index:2;width:260px;padding:16px 18px;border-radius:10px;border:1px solid rgba(245,166,35,0.25);background:#0c0c14;opacity:0;animation:nodeIn 0.5s 1s ease-out forwards">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#f5a623,transparent)"></div>
+    <div style="font-size:12px;font-weight:700;color:#f5a623;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px">Specification PRD</div>
+    <div style="font-size:11px;color:#999;line-height:1.5"><strong style="color:#ccc">30-76KB</strong> with TypeScript interfaces, state machines, API contracts. So complete Codex needs zero clarification.</div>
+    <div style="margin-top:8px;display:inline-block;padding:3px 10px;border-radius:4px;border:1px solid rgba(245,166,35,0.25);font-size:10px;font-weight:600;color:#f5a623">🏛️ Claude Opus 4.6</div>
+  </div>
+
+  <!-- 03 Review — with animated score -->
+  <div style="position:absolute;left:390px;top:300px;z-index:3;width:260px;padding:16px 18px;border-radius:10px;border:1px solid rgba(255,100,100,0.25);background:#0c0c14;opacity:0;animation:nodeIn 0.5s 2.2s ease-out forwards">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ff6464,transparent)"></div>
+    <div style="font-size:12px;font-weight:700;color:#ff6464;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px">AI Review Loop</div>
+    <div style="font-size:11px;color:#999;line-height:1.5">ChatGPT Pro (o3-pro) spends <strong style="color:#ccc">7-15 min</strong> of extended thinking. Scores architecture, finds contradictions, proposes fixes.</div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+      <div style="padding:3px 10px;border-radius:4px;border:1px solid rgba(255,100,100,0.25);font-size:10px;font-weight:600;color:#ff6464">🔬 ChatGPT 5.2 Pro</div>
+      <div id="review-score" style="font-size:18px;font-weight:800;color:#ff6464;min-width:55px;text-align:center">7.3</div>
     </div>
-    <p><strong>7-15 min extended thinking.</strong> Scores architecture, finds contradictions, proposes fixes.</p>
-    <div class="tool" style="border-color:rgba(255,100,100,0.25);color:#ff6464">🔬 ChatGPT 5.2 Pro</div>
   </div>
 
-  <!-- Score badges — right of review loop -->
-  <div class="sbadge" id="s1" style="left:720px;top:248px;background:rgba(255,100,100,0.12);border:1px solid rgba(255,100,100,0.3);color:#ff6464">7.3 ✗</div>
-  <div class="sbadge" id="s2" style="left:720px;top:288px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);color:#f5a623">8.5 ✗</div>
-  <div class="sbadge" id="s3" style="left:720px;top:328px;background:rgba(80,220,120,0.12);border:1px solid rgba(80,220,120,0.3);color:#50dc78">9.47 ✓</div>
+  <!-- Review loop arrow + iteration labels -->
+  <div style="position:absolute;left:660px;top:170px;z-index:2;opacity:0;animation:nodeIn 0.4s 2.5s ease-out forwards">
+    <div style="font-size:9px;color:rgba(255,100,100,0.5);text-transform:uppercase;letter-spacing:1px;text-align:center;width:80px">iterate<br>until 9/10</div>
+  </div>
+  <!-- Score badges that appear during iteration -->
+  <div id="score-7" style="position:absolute;left:700px;top:210px;z-index:4;opacity:0">
+    <div style="padding:4px 12px;border-radius:6px;background:rgba(255,100,100,0.15);border:1px solid rgba(255,100,100,0.3);font-size:12px;font-weight:700;color:#ff6464">7.3 ✗</div>
+  </div>
+  <div id="score-8" style="position:absolute;left:700px;top:245px;z-index:4;opacity:0">
+    <div style="padding:4px 12px;border-radius:6px;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.3);font-size:12px;font-weight:700;color:#f5a623">8.5 ✗</div>
+  </div>
+  <div id="score-9" style="position:absolute;left:700px;top:280px;z-index:4;opacity:0">
+    <div style="padding:4px 12px;border-radius:6px;background:rgba(80,220,120,0.15);border:1px solid rgba(80,220,120,0.3);font-size:12px;font-weight:700;color:#50dc78">9.47 ✓</div>
+  </div>
 
-  <!-- 04 Build card — dot center at (200, 490) -->
-  <div class="fcard" style="left:60px;top:440px;--d:5.5s;border-color:rgba(80,220,120,0.25)">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#50dc78,transparent);border-radius:10px 10px 0 0"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <div class="dot" style="background:#50dc78;box-shadow:0 0 14px rgba(80,220,120,0.4);width:32px;height:32px;font-size:13px">⚡</div>
-      <h4 style="color:#50dc78;margin:0">Codex Execution</h4>
+  <!-- 04 Build -->
+  <div style="position:absolute;left:50px;top:395px;z-index:2;width:260px;padding:16px 18px;border-radius:10px;border:1px solid rgba(80,220,120,0.25);background:#0c0c14;opacity:0;animation:nodeIn 0.5s 6s ease-out forwards">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#50dc78,transparent)"></div>
+    <div style="font-size:12px;font-weight:700;color:#50dc78;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px">Codex Execution</div>
+    <div style="font-size:11px;color:#999;line-height:1.5"><strong style="color:#ccc">One-shot builds</strong> from perfect specs. Reads CODING-STANDARDS.md + PRD → builds entire feature set in sandbox.</div>
+    <div style="margin-top:8px;display:inline-block;padding:3px 10px;border-radius:4px;border:1px solid rgba(80,220,120,0.25);font-size:10px;font-weight:600;color:#50dc78">⚡ GPT-5.3 Codex</div>
+  </div>
+
+  <!-- 05 Visual QA -->
+  <div style="position:absolute;left:730px;top:370px;z-index:2;width:240px;padding:16px 18px;border-radius:10px;border:1px solid rgba(74,224,224,0.25);background:#0c0c14;opacity:0;animation:nodeIn 0.5s 7.2s ease-out forwards">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4ae0e0,transparent)"></div>
+    <div style="font-size:12px;font-weight:700;color:#4ae0e0;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px">Visual QA</div>
+    <div style="font-size:11px;color:#999;line-height:1.5">Playwright captures → Claude Vision scores → fix → repeat until pixel-perfect.</div>
+    <div style="margin-top:8px;display:inline-block;padding:3px 10px;border-radius:4px;border:1px solid rgba(74,224,224,0.25);font-size:10px;font-weight:600;color:#4ae0e0">📸 Playwright + Vision</div>
+  </div>
+
+  <!-- 06 Ship -->
+  <div style="position:absolute;left:790px;top:490px;z-index:2;opacity:0;animation:nodeIn 0.5s 8.5s ease-out forwards">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:42px;height:42px;border-radius:50%;background:#50dc78;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#06060c;box-shadow:0 0 20px rgba(80,220,120,0.4)">✓</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#e8e8f0">Ship to Production</div>
+        <div style="font-size:11px;color:#666">GitHub Pages · CodeQL · Live in &lt;30s</div>
+      </div>
     </div>
-    <p><strong>One-shot builds</strong> from perfect specs. Sandbox + tests. 5-20 min.</p>
-    <div class="tool" style="border-color:rgba(80,220,120,0.25);color:#50dc78">⚡ GPT-5.3 Codex</div>
   </div>
 
-  <!-- 05 Visual QA — dot center at (780, 580) -->
-  <div class="nd" style="left:700px;top:558px;--d:7s">
-    <div class="dot" style="background:#4ae0e0;box-shadow:0 0 14px rgba(74,224,224,0.4)">📸</div>
-    <div><div class="lb">Visual QA</div><div class="ds">Playwright + Claude Vision</div></div>
-  </div>
-
-  <!-- 06 Ship — dot center at (530, 665) -->
-  <div class="nd" style="left:450px;top:643px;--d:8.5s">
-    <div class="dot" style="background:#50dc78;box-shadow:0 0 20px rgba(80,220,120,0.4);width:44px;height:44px;font-size:18px">✓</div>
-    <div><div class="lb" style="font-size:15px">Ship</div><div class="ds">GitHub Pages · CodeQL · Live in &lt;30s</div></div>
-  </div>
-
-  <!-- Otto badge -->
-  <div style="position:absolute;right:30px;top:15px;z-index:2;padding:10px 16px;border-radius:10px;border:1px solid rgba(180,100,255,0.2);background:#0c0c14;text-align:center;opacity:0;animation:fadeIn 0.4s 0.3s ease-out forwards">
-    <div style="font-size:13px;font-weight:700;color:#b46aff">🦦 Otto</div>
+  <!-- Otto orchestrator badge -->
+  <div style="position:absolute;right:20px;top:0;z-index:2;padding:10px 16px;border-radius:10px;border:1px solid rgba(180,100,255,0.25);background:#0c0c14;text-align:center;opacity:0;animation:nodeIn 0.4s 0.3s ease-out forwards">
+    <div style="font-size:12px;font-weight:700;color:#b46aff">🦦 OTTO</div>
     <div style="font-size:10px;color:#666">Orchestrates everything</div>
   </div>
+
+  <!-- Key insight -->
+  <div style="position:absolute;left:50px;top:130px;z-index:2;width:220px;padding:12px 14px;border-radius:8px;border:1px dashed rgba(245,166,35,0.2);background:rgba(245,166,35,0.03);opacity:0;animation:nodeIn 0.5s 1.5s ease-out forwards">
+    <div style="font-size:10px;font-weight:600;color:#f5a623;margin-bottom:4px">💡 The Key Insight</div>
+    <div style="font-size:10px;color:#777;line-height:1.5">99% accuracy × 200 decisions = 13% success. We make ~20 perfect decisions in the PRD instead.</div>
+  </div>
+
+  <!-- Animated SVG paths on top -->
+  <svg width="1080" height="580" style="position:absolute;top:0;left:0;z-index:5;pointer-events:none">
+    <!-- Glow paths -->
+    <!-- Research → PRD -->
+    <path d="M200,45 C200,80 390,100 420,148" fill="none" stroke="rgba(100,160,255,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="300" to="0" dur="1s" begin="0.5s;shipPulse.end+2s" fill="freeze" id="g1"/>
+    </path>
+    <!-- PRD → Review -->
+    <path d="M540,295 L540,300" fill="none" stroke="rgba(245,166,35,0.7)" stroke-width="2.5" stroke-dasharray="10" stroke-dashoffset="10" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.3s" begin="g1.end+0.2s" fill="freeze" id="g2"/>
+    </path>
+    <!-- Review → Build (after 3 iterations) -->
+    <path d="M540,370 C540,400 300,400 200,420" fill="none" stroke="rgba(80,220,120,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="400" stroke-dashoffset="400" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="g2.end+5s" fill="freeze" id="g3"/>
+    </path>
+    <!-- Build → Visual QA -->
+    <path d="M310,440 C500,450 650,420 750,400" fill="none" stroke="rgba(74,224,224,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="500" stroke-dashoffset="500" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="500" to="0" dur="1s" begin="g3.end+0.3s" fill="freeze" id="g4"/>
+    </path>
+    <!-- Visual QA → Ship -->
+    <path d="M870,450 L870,490" fill="none" stroke="rgba(80,220,120,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="40" stroke-dashoffset="40" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="40" to="0" dur="0.4s" begin="g4.end+0.2s" fill="freeze" id="g5"/>
+    </path>
+
+    <!-- REVIEW ITERATION LOOP — 3 visible passes -->
+    <!-- Loop arc (right side of review cards) -->
+    <path d="M655,330 C750,340 750,180 655,170" fill="none" stroke="rgba(255,100,100,0.6)" stroke-width="2" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="300" to="0" dur="0.8s" begin="g2.end+0.5s" fill="freeze" id="loop1"/>
+    </path>
+    <path d="M655,330 C750,340 750,180 655,170" fill="none" stroke="rgba(245,166,35,0.6)" stroke-width="2" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="300" to="0" dur="0.8s" begin="loop1.end+0.8s" fill="freeze" id="loop2"/>
+    </path>
+    <path d="M655,330 C750,340 750,180 655,170" fill="none" stroke="rgba(80,220,120,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300" filter="url(#gl)">
+      <animate attributeName="stroke-dashoffset" from="300" to="0" dur="0.8s" begin="loop2.end+0.8s" fill="freeze" id="loop3"/>
+    </path>
+
+    <!-- Loop traveling dots -->
+    <circle r="4" fill="#ff6464" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.8s" begin="g2.end+0.5s" fill="freeze"/>
+      <animateMotion dur="0.8s" begin="g2.end+0.5s" fill="freeze" path="M655,330 C750,340 750,180 655,170"/>
+    </circle>
+    <circle r="4" fill="#f5a623" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.8s" begin="loop1.end+0.8s" fill="freeze"/>
+      <animateMotion dur="0.8s" begin="loop1.end+0.8s" fill="freeze" path="M655,330 C750,340 750,180 655,170"/>
+    </circle>
+    <circle r="5" fill="#50dc78" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="0.8s" begin="loop2.end+0.8s" fill="freeze"/>
+      <animateMotion dur="0.8s" begin="loop2.end+0.8s" fill="freeze" path="M655,330 C750,340 750,180 655,170"/>
+    </circle>
+
+    <!-- Main path traveling dots -->
+    <circle r="5" fill="#64a0ff" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="0.5s;shipPulse.end+2s" fill="freeze"/>
+      <animateMotion dur="1s" begin="0.5s;shipPulse.end+2s" fill="freeze" path="M200,45 C200,80 390,100 420,148"/>
+    </circle>
+    <circle r="5" fill="#50dc78" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="g2.end+5s" fill="freeze"/>
+      <animateMotion dur="1s" begin="g2.end+5s" fill="freeze" path="M540,370 C540,400 300,400 200,420"/>
+    </circle>
+    <circle r="5" fill="#4ae0e0" opacity="0" filter="url(#gl)">
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="g3.end+0.3s" fill="freeze"/>
+      <animateMotion dur="1s" begin="g3.end+0.3s" fill="freeze" path="M310,440 C500,450 650,420 750,400"/>
+    </circle>
+
+    <!-- Ship convergence pulse -->
+    <circle cx="870" cy="500" r="6" fill="none" stroke="#50dc78" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0" dur="1.5s" begin="g5.end+0.2s" fill="freeze" id="shipPulse"/>
+      <animate attributeName="r" from="6" to="35" dur="1.5s" begin="g5.end+0.2s" fill="freeze"/>
+    </circle>
+    <circle cx="870" cy="500" r="6" fill="none" stroke="#f5a623" stroke-width="1.5" opacity="0">
+      <animate attributeName="opacity" values="0;0.5;0" dur="2s" begin="g5.end+0.4s" fill="freeze"/>
+      <animate attributeName="r" from="6" to="50" dur="2s" begin="g5.end+0.4s" fill="freeze"/>
+    </circle>
+  </svg>
 </div>
 
 <script>
-// Animate score badges appearing with the review loop iterations
-// r1 starts at p2.end+0.4s ≈ 2.9s, each loop ~1.5s apart
-const timings = [
-  {el:'s1', delay:3800},  // After loop pass 1
-  {el:'s2', delay:5300},  // After loop pass 2
-  {el:'s3', delay:6800},  // After loop pass 3
-];
-function showScores(){
-  timings.forEach(t => {
-    const el = document.getElementById(t.el);
-    if(el) { el.style.opacity='0'; setTimeout(()=>el.style.opacity='1', t.delay); }
-  });
-}
-showScores();
-// Re-run on loop restart (~12s total animation + 2s pause)
-setInterval(()=>{
-  timings.forEach(t => { const el=document.getElementById(t.el); if(el) el.style.opacity='0'; });
-  showScores();
-}, 14000);
+// Animate the review score climbing: 7.3 → 8.5 → 9.47
+(function(){
+  const scoreEl = document.getElementById('review-score');
+  const s7 = document.getElementById('score-7');
+  const s8 = document.getElementById('score-8');
+  const s9 = document.getElementById('score-9');
+  if(!scoreEl) return;
+  
+  function runScoreAnimation() {
+    // Reset
+    scoreEl.textContent = '7.3';
+    scoreEl.style.color = '#ff6464';
+    s7.style.opacity = '0'; s8.style.opacity = '0'; s9.style.opacity = '0';
+    
+    // Wait for review card to appear (~2.5s) + loop arc start (~0.5s)
+    setTimeout(() => {
+      // Iteration 1: 7.3 — fail
+      s7.style.transition = 'opacity 0.4s';
+      s7.style.opacity = '1';
+    }, 3500);
+    
+    setTimeout(() => {
+      // Iteration 2: 8.5 — better but not enough
+      scoreEl.textContent = '8.5';
+      scoreEl.style.color = '#f5a623';
+      s8.style.transition = 'opacity 0.4s';
+      s8.style.opacity = '1';
+    }, 5100);
+    
+    setTimeout(() => {
+      // Iteration 3: 9.47 — pass!
+      scoreEl.textContent = '9.47';
+      scoreEl.style.color = '#50dc78';
+      s9.style.transition = 'opacity 0.4s';
+      s9.style.opacity = '1';
+    }, 6700);
+  }
+  
+  // Run once on load, then on each full loop restart
+  setTimeout(runScoreAnimation, 0);
+  // Re-run every full cycle (~12s animation + 2s pause)
+  setInterval(runScoreAnimation, 14000);
+})();
 </script>
-
 
 <!-- DETAILED PIPELINE BREAKDOWN -->
 <div class="section-hdr">
